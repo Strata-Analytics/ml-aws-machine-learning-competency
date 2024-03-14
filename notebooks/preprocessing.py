@@ -46,6 +46,12 @@ if __name__ == "__main__":
                                                         df_train["target"], 
                                                         test_size=split_ratio, 
                                                         random_state=2023)
+    
+    print("Splitting data into train and validation sets with ratio 0.15")
+    X_train, X_valid, y_train, y_valid = train_test_split(X_train, 
+                                                        y_train, 
+                                                        test_size=0.15, 
+                                                        random_state=2023)
 
     # Create transformers for categorical and numerical features
     categorical_transformer = OneHotEncoder(handle_unknown='ignore', sparse=False)
@@ -61,18 +67,25 @@ if __name__ == "__main__":
     
     print("Running preprocessing and feature engineering transformations")
     train_features = preprocessor.fit_transform(X_train)
+    valid_features = preprocessor.transform(X_valid)
     test_features = preprocessor.transform(X_test)
     print("Train data shape after preprocessing: {}".format(train_features.shape))
+    print("Validation data shape after preprocessing: {}".format(valid_features.shape))
     print("Test data shape after preprocessing: {}".format(test_features.shape))
 
     train_features_output_path = os.path.join("/opt/ml/processing/train", "train_features.csv")
+    valid_features_output_path = os.path.join("/opt/ml/processing/valid", "valid_features.csv")
     train_labels_output_path = os.path.join("/opt/ml/processing/train", "train_labels.csv")
+    valid_labels_output_path = os.path.join("/opt/ml/processing/valid", "valid_labels.csv")
 
     test_features_output_path = os.path.join("/opt/ml/processing/test", "test_features.csv")
     test_labels_output_path = os.path.join("/opt/ml/processing/test", "test_labels.csv")
 
     print("Saving training features to {}".format(train_features_output_path))
     pd.DataFrame(train_features).to_csv(train_features_output_path, index=False)
+    
+    print("Saving validation features to {}".format(valid_features_output_path))
+    pd.DataFrame(valid_features).to_csv(valid_features_output_path, index=False)
 
     print("Saving test features to {}".format(test_features_output_path))
     pd.DataFrame(test_features).to_csv(test_features_output_path, index=False)
@@ -80,5 +93,8 @@ if __name__ == "__main__":
     print("Saving training labels to {}".format(train_labels_output_path))
     y_train.to_csv(train_labels_output_path, index=False)
 
+    print("Saving training labels to {}".format(valid_labels_output_path))
+    y_valid.to_csv(valid_labels_output_path, index=False)
+    
     print("Saving test labels to {}".format(test_labels_output_path))
     y_test.to_csv(test_labels_output_path, index=False)
