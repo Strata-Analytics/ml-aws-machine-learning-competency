@@ -37,22 +37,19 @@ if __name__ == "__main__":
     int_cols = list(df_train.select_dtypes(include='int64').columns)
     df_train.drop_duplicates(inplace=True)
     
+    # handle missing data
+    for cat in cat_cols: 
+        df_train[cat] = df_train[cat].fillna('sin dato')
+    
+    for num in num_cols: 
+        df_train[num] = df_train[num].fillna(0.0)
+    
+    for i in int_cols: 
+        df_train[i] = df_train[i].fillna(0)
+    
     negative_examples, positive_examples = np.bincount(df_train["target"])
     print_shape(df_train)
     
-    split_ratio = args.train_test_split_ratio
-    print("Splitting data into train and test sets with ratio {}".format(split_ratio))
-    X_train, X_test, y_train, y_test = train_test_split(df_train.drop("target", axis=1), 
-                                                        df_train["target"], 
-                                                        test_size=split_ratio, 
-                                                        random_state=2023)
-    
-    print("Splitting data into train and validation sets with ratio 0.15")
-    X_train, X_valid, y_train, y_valid = train_test_split(X_train, 
-                                                        y_train, 
-                                                        test_size=0.15, 
-                                                        random_state=2023)
-
     # Create transformers for categorical and numerical features
     categorical_transformer = OneHotEncoder(handle_unknown='ignore', sparse=False)
     numerical_transformer = StandardScaler()
@@ -65,36 +62,62 @@ if __name__ == "__main__":
         ]
     )
     
+    
+    
     print("Running preprocessing and feature engineering transformations")
-    train_features = preprocessor.fit_transform(X_train)
-    valid_features = preprocessor.transform(X_valid)
-    test_features = preprocessor.transform(X_test)
-    print("Train data shape after preprocessing: {}".format(train_features.shape))
-    print("Validation data shape after preprocessing: {}".format(valid_features.shape))
-    print("Test data shape after preprocessing: {}".format(test_features.shape))
-
-    train_features_output_path = os.path.join("/opt/ml/processing/train", "train_features.csv")
-    valid_features_output_path = os.path.join("/opt/ml/processing/valid", "valid_features.csv")
-    train_labels_output_path = os.path.join("/opt/ml/processing/train", "train_labels.csv")
-    valid_labels_output_path = os.path.join("/opt/ml/processing/valid", "valid_labels.csv")
-
-    test_features_output_path = os.path.join("/opt/ml/processing/test", "test_features.csv")
-    test_labels_output_path = os.path.join("/opt/ml/processing/test", "test_labels.csv")
-
-    print("Saving training features to {}".format(train_features_output_path))
-    pd.DataFrame(train_features).to_csv(train_features_output_path, index=False)
+    df_train_ = preprocessor.fit_transform(df_train.drop("target", axis=1))
+    print("Train data shape after preprocessing: {}".format(df_train_.shape))
+       
+    split_ratio = args.train_test_split_ratio
+    print("Splitting data into train and test sets with ratio {}".format(split_ratio))
+    X_train, X_test, y_train, y_test = train_test_split(df_train_, 
+                                                        df_train["target"], 
+                                                        test_size=split_ratio, 
+                                                        random_state=2023)
     
-    print("Saving validation features to {}".format(valid_features_output_path))
-    pd.DataFrame(valid_features).to_csv(valid_features_output_path, index=False)
-
-    print("Saving test features to {}".format(test_features_output_path))
-    pd.DataFrame(test_features).to_csv(test_features_output_path, index=False)
-
-    print("Saving training labels to {}".format(train_labels_output_path))
-    y_train.to_csv(train_labels_output_path, index=False)
-
-    print("Saving training labels to {}".format(valid_labels_output_path))
-    y_valid.to_csv(valid_labels_output_path, index=False)
+    print("Splitting data into train and validation sets with ratio 0.15")
+    X_train, X_valid, y_train, y_valid = train_test_split(X_train, 
+                                                        y_train, 
+                                                        test_size=0.15, 
+                                                        random_state=2023)
     
-    print("Saving test labels to {}".format(test_labels_output_path))
-    y_test.to_csv(test_labels_output_path, index=False)
+    train = pd.concat([pd.Series(y_train, index=y_train.index,
+                             name='target', dtype=int), pd.DataFrame(X_train, index=y_train.index)], axis=1)
+    validation = pd.concat([pd.Series(y_valid, index=y_valid.index,
+                            name='target', dtype=int), pd.DataFrame(X_valid, index=y_valid.index)], axis=1)
+    test = pd.concat([pd.Series(y_test, index=y_test.index,
+                            name='target', dtype=int), pd.DataFrame(X_test, index=y_test.index)], axis=1)
+    
+    negative_examples, positive_examples = np.bincount(train["target"])
+    print(
+        "Train data after spliting: {}, {} positive examples, {} negative examples, {} churn rate".format(
+            train.shape, positive_examples, negative_examples, round(100*positive_examples/(positive_examples+negative_examples),2) 
+        )
+    )
+
+    negative_examples, positive_examples = np.bincount(validation["target"])
+    print(
+        "Validation data after spliting: {}, {} positive examples, {} negative examples, {} churn rate".format(
+            validation.shape, positive_examples, negative_examples, round(100*positive_examples/(positive_examples+negative_examples),2) 
+        )
+    )
+    
+    negative_examples, positive_examples = np.bincount(test["target"])
+    print(
+        "Test data after spliting: {}, {} positive examples, {} negative examples, {} churn rate".format(
+            test.shape, positive_examples, negative_examples, round(100*positive_examples/(positive_examples+negative_examples),2) 
+        )
+    )
+
+    train_output_path = os.path.join("/opt/ml/processing/train", "train.csv")
+    validation_output_path = os.path.join("/opt/ml/processing/validation", "validation.csv")
+    test_output_path = os.path.join("/opt/ml/processing/test", "test.csv")
+    
+    print("Saving train set to {}".format(train_output_path))
+    train.to_csv(train_output_path, index=False)
+    
+    print("Saving validation set to {}".format(validation_output_path))
+    validation.to_csv(validation_output_path, index=False)
+
+    print("Saving test set to {}".format(test_output_path))
+    test.to_csv(test_output_path, index=False)
