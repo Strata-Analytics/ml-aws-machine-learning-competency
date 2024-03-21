@@ -62,8 +62,6 @@ if __name__ == "__main__":
         ]
     )
     
-    
-    
     print("Running preprocessing and feature engineering transformations")
     df_train_ = preprocessor.fit_transform(df_train.drop("target", axis=1))
     print("Train data shape after preprocessing: {}".format(df_train_.shape))
@@ -112,6 +110,11 @@ if __name__ == "__main__":
     train_output_path = os.path.join("/opt/ml/processing/train", "train.csv")
     validation_output_path = os.path.join("/opt/ml/processing/validation", "validation.csv")
     test_output_path = os.path.join("/opt/ml/processing/test", "test.csv")
+    feat_out_path = os.path.join("/opt/ml/processing/features", "features.csv")
+    feat_names_out = preprocessor.get_feature_names_out()
+    
+    print("Saving feature names after preprocessing to {}".format(feat_out_path))
+    pd.DataFrame(feat_names_out).to_csv(feat_out_path, index=False)
     
     print("Saving train set to {}".format(train_output_path))
     train.to_csv(train_output_path, index=False)
@@ -121,3 +124,5 @@ if __name__ == "__main__":
 
     print("Saving test set to {}".format(test_output_path))
     test.to_csv(test_output_path, index=False)
+    
+    
