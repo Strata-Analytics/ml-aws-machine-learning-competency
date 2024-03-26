@@ -1,0 +1,134 @@
+{
+  "category_loss_per_step": [
+    {
+      "steps": 0,
+      "loss": 0.85872,
+      "category": "train-auc"
+    },
+    {
+      "steps": 5,
+      "loss": 0.88582,
+      "category": "train-auc"
+    },
+    {
+      "steps": 10,
+      "loss": 0.89326,
+      "category": "train-auc"
+    },
+    {
+      "steps": 15,
+      "loss": 0.89838,
+      "category": "train-auc"
+    },
+    {
+      "steps": 20,
+      "loss": 0.90338,
+      "category": "train-auc"
+    },
+    {
+      "steps": 25,
+      "loss": 0.90811,
+      "category": "train-auc"
+    },
+    {
+      "steps": 30,
+      "loss": 0.91308,
+      "category": "train-auc"
+    },
+    {
+      "steps": 35,
+      "loss": 0.91826,
+      "category": "train-auc"
+    },
+    {
+      "steps": 40,
+      "loss": 0.92216,
+      "category": "train-auc"
+    },
+    {
+      "steps": 45,
+      "loss": 0.92573,
+      "category": "train-auc"
+    },
+    {
+      "steps": 50,
+      "loss": 0.92849,
+      "category": "train-auc"
+    },
+    {
+      "steps": 55,
+      "loss": 0.93166,
+      "category": "train-auc"
+    },
+    {
+      "steps": 60,
+      "loss": 0.93542,
+      "category": "train-auc"
+    },
+    {
+      "steps": 0,
+      "loss": 0.81387,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 5,
+      "loss": 0.83375,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 10,
+      "loss": 0.83658,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 15,
+      "loss": 0.83564,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 20,
+      "loss": 0.83625,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 25,
+      "loss": 0.83592,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 30,
+      "loss": 0.83707,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 35,
+      "loss": 0.83693,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 40,
+      "loss": 0.83574,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 45,
+      "loss": 0.83591,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 50,
+      "loss": 0.83601,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 55,
+      "loss": 0.8366,
+      "category": "validation-auc"
+    },
+    {
+      "steps": 60,
+      "loss": 0.83651,
+      "category": "validation-auc"
+    }
+  ]
+}
