@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
+from sklearn import metrics
 
 def summary(df):
     summary_df = pd.DataFrame({'variable':df.columns})
@@ -142,3 +143,16 @@ def extract_metric(report_str, metric, target_class=1):
         if line.strip().startswith(str(target_class)):
             metric_value = float(line.split()[list(report_str.split('\n')[0].split()).index(metric) + 1])
             return metric_value
+        
+def plot_log_loss(cutoffs, y, y_pred):
+    log_loss = []
+    for c in cutoffs:
+        log_loss.append(
+            metrics.log_loss(y, np.where(y_pred > c, 1, 0))
+        )
+    plt.figure(figsize=(15,10))
+    plt.plot(cutoffs, log_loss)
+    plt.xlabel("Cutoff")
+    plt.ylabel("Log loss")
+    plt.show()
+    return log_loss
